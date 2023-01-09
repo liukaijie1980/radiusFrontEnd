@@ -1,26 +1,43 @@
 <template>
+
+
+  
   <div class="navbar">
-    <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
-
+   
+    <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container"
+      @toggleClick="toggleSideBar" />
+  
     <breadcrumb id="breadcrumb-container" class="breadcrumb-container" />
-
+   
     <div class="right-menu">
-      <template v-if="device!=='mobile'">
+      
+      <template v-if="device !== 'mobile'">
+        <DbInformation />
+        <Nas ></Nas>
+        
+        <!-- <el-button type="primary" plain>客户端接入</el-button>       
+        <el-button type="primary" plain>统计报表</el-button>
+        <el-button type="primary" plain>抓包分析</el-button> -->
+  
+  
+  
         <search id="header-search" class="right-menu-item" />
-
+  
         <error-log class="errLog-container right-menu-item hover-effect" />
-
+  
         <screenfull id="screenfull" class="right-menu-item hover-effect" />
-
+  
         <el-tooltip content="Global Size" effect="dark" placement="bottom">
           <size-select id="size-select" class="right-menu-item hover-effect" />
         </el-tooltip>
-
+  
+  
       </template>
-
+  
+  
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
+          <img :src="avatar + '?imageView2/1/w/80/h/80'" class="user-avatar">
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown">
@@ -39,11 +56,15 @@
           <el-dropdown-item divided @click.native="logout">
             <span style="display:block;">Log Out</span>
           </el-dropdown-item>
-          
+  
         </el-dropdown-menu>
       </el-dropdown>
+
     </div>
+ 
+  
   </div>
+
 </template>
 
 <script>
@@ -54,6 +75,8 @@ import ErrorLog from '@/components/ErrorLog'
 import Screenfull from '@/components/Screenfull'
 import SizeSelect from '@/components/SizeSelect'
 import Search from '@/components/HeaderSearch'
+import DbInformation from './globalDialog/DbInformation.vue'
+import Nas from './globalDialog/Nas.vue'
 
 export default {
   components: {
@@ -62,7 +85,9 @@ export default {
     ErrorLog,
     Screenfull,
     SizeSelect,
-    Search
+    Search,
+    DbInformation,
+    Nas
   },
   computed: {
     ...mapGetters([
@@ -71,6 +96,13 @@ export default {
       'device'
     ])
   },
+
+  data() {
+    return {
+     
+    }    
+  },
+
   methods: {
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
@@ -79,7 +111,8 @@ export default {
       await this.$store.dispatch('user/logout')
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
     },
-    
+
+
   }
 }
 </script>
@@ -87,7 +120,7 @@ export default {
 <style lang="scss" scoped>
 .navbar {
   height: 50px;
-  overflow: hidden;
+  // overflow: hidden;
   position: relative;
   background: #fff;
   box-shadow: 0 1px 4px rgba(0,21,41,.08);
@@ -114,7 +147,8 @@ export default {
     vertical-align: top;
   }
 
-  .right-menu {
+  .right-menu 
+  {
     float: right;
     height: 100%;
     line-height: 50px;
@@ -164,6 +198,6 @@ export default {
         }
       }
     }
-  }
+  } 
 }
 </style>
