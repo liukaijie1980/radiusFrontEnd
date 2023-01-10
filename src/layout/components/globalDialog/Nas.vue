@@ -1,7 +1,7 @@
 <template>
 
     <div>
-        <el-button type="primary" plain size="mini" @click="showNasDialog">Nas信息</el-button>
+        <!-- <el-button type="primary" plain size="mini" @click="showNasDialog">Nas信息</el-button> -->
 
         <!--数据库信息的对话框-->
         <el-dialog title="数据库信息" :visible.sync="NasDialogVisible" width="50%" :append-to-body="true">
@@ -107,7 +107,7 @@ export default {
             cb(new Error('请输入纯数字'))
         }
         return {
-
+            messages: [],
             userList: [],
 
             // 控制添加用户对话框显示与隐藏
@@ -200,6 +200,12 @@ export default {
 
 
     methods: {
+
+    parentMsg: function (msg) {
+      console.log("showNasDialog",msg);
+     this.messages.push(msg);     
+      this.showNasDialog();
+    },
 
         //获取用户列表
         getUserList() {

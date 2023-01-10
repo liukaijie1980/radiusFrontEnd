@@ -30,12 +30,12 @@ const sidebartreeRouter={
        }
       },
       {
-        path: 'device/:NodeId',
-        component: () => import('@/views/sidebartree/device.vue'),
-        name: 'device',    
+        path: 'realm/:NodeId',
+        component: () => import('@/views/sidebartree/realm.vue'),
+        name: 'realm',    
         props:true,     
         meta: {
-        title: '设备对接', icon: 'icon', noCache: true , 
+        title: '管理域', icon: 'icon', noCache: true , 
         roles: ['admin','editor']
        }
       },

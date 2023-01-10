@@ -118,9 +118,7 @@ export default {
         case 2:
           this.$router.push({ name: 'folder', params: { NodeId } })
           break;
-        case 3:
-          this.$router.push({ name: 'device', params: { NodeId } })
-          break;
+       
         case 4:
           this.$router.push({ name: 'account', params: { NodeId } })
           break;
@@ -155,12 +153,7 @@ export default {
         owner: this.$store.getters.name,
         children: [
           //添加功能菜单，这里将来要结合权限管理
-          {
-            id: uuidv4(),
-            label: "设备对接",
-            type: 3,
-            pid: id,
-          }, {
+         {
             id: uuidv4(),
             label: "上网账号",
             type: 4,

@@ -1,7 +1,7 @@
 <template>
     
     <div >
-        <el-button type="primary" plain size="mini"  @click="showAddDialog" >数据库信息</el-button>
+        <!-- <el-button type="primary" plain size="mini"  @click="showAddDialog" >数据库信息</el-button> -->
    
         <!--数据库信息的对话框-->
         <el-dialog title="数据库信息" :visible.sync="addDialogVisible" width="50%" @close="addDialogClosed" :append-to-body="true">
@@ -45,14 +45,23 @@
         // 当前每页显示的条数
         pagesize: 10
       },
-      userList: [],
+      userList: [],    
       total: 0,
       // 控制添加用户对话框显示与隐藏
       addDialogVisible: false,
+      messages: [],
       }    
     },
     
     methods: {
+
+      parentMsg: function (msg) {
+      this.messages.push(msg);
+      console.log("showAddDialog",msg);
+      this.showAddDialog();
+    },
+
+
         //获取用户列表
         getUserList() {
 

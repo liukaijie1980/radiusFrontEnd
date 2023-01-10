@@ -7,8 +7,6 @@
             <el-tag type="info">创建者:     {{owner}}</el-tag>
             <el-tag type="info">节点id:     {{currentId}}</el-tag>
 
-     
-
             <el-table :data="tableData" stripe style="width: 100%;">
                 <el-table-column prop="subNodes" label="子管理节点数量" width="180">
                 </el-table-column>

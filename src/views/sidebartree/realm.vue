@@ -3,9 +3,9 @@
     <div>
 
         <el-card>
-            <el-tag type="info">父节点id:     {{ParentId}}</el-tag>
-            <el-row :gutter="20">
-                  
+            <!-- <el-tag type="info">父节点id:     {{ParentId}}</el-tag> -->
+            <el-tag type="info">以下是本节点管理的域,推荐一个节点有且只有一个域</el-tag>
+            <el-row :gutter="20">                 
                 
                 <el-col :span="4">
                     <el-button type="primary" @click="addDialogVisible = true">添加域(realm)</el-button>
@@ -78,7 +78,7 @@ export default {
 
         return {
            
-            ParentId: this.$store.getters.currentNode.pid,
+            // ParentId: this.$store.getters.currentNode.pid,
             
 
             userList: [],
@@ -88,7 +88,7 @@ export default {
             // 添加用户的表单数据
             addForm: {
                 realm: '',
-                node_pid: this.$store.getters.currentNode.pid
+                node_pid: this.$store.getters.currentNode.id
             },
       
            
@@ -126,7 +126,7 @@ export default {
         //获取用户列表
         getUserList() {
             console.log("GetRealms: getCurrentNode", this.$store.getters.treeObj.getCurrentNode() )
-            GetRealms(this.$store.getters.treeObj.getCurrentNode() .pid).then(
+            GetRealms(this.$store.getters.treeObj.getCurrentNode().id).then(
                 Response => {
                     console.log("after GetRealms:Response.data.data", Response.data.data)
                     this.userList = Response.data.data;

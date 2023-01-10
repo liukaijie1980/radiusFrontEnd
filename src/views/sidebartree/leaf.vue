@@ -20,7 +20,7 @@
 
             <admin :NodeId="currentId"></admin>
           
-            
+            <realm ></realm>
         </el-main>
     </el-container>
 
@@ -29,6 +29,7 @@
 <script>
 
 import admin from "./admin.vue";
+import realm from "./realm.vue";
 
 
 export default {
@@ -37,7 +38,7 @@ export default {
     // 组件注册
     components: {      
         admin,
-  
+        realm
     },
     data() {
         return {

@@ -1,40 +1,28 @@
 <template>
-
-
-  
   <div class="navbar">
-   
     <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container"
       @toggleClick="toggleSideBar" />
-  
     <breadcrumb id="breadcrumb-container" class="breadcrumb-container" />
-   
     <div class="right-menu">
-      
-      <template v-if="device !== 'mobile'">
-        <DbInformation />
-        <Nas ></Nas>
+      <template v-if="device !== 'mobile'" >
         
-        <!-- <el-button type="primary" plain>客户端接入</el-button>       
-        <el-button type="primary" plain>统计报表</el-button>
-        <el-button type="primary" plain>抓包分析</el-button> -->
-  
-  
-  
+        <Nas  ref="childNas" /> 
+        <DbInformation ref="childDbInformation" /> 
+        <!-- 奇怪，把下面的按钮代码放到上面的自定义组件中去的话，每个按钮会独占一行，所以被迫分离出来 -->
+        <el-button type="primary" plain size="mini" @click="showNasDialog">NAS对接</el-button>
+        <el-button type="primary" plain size="mini" @click="showDbInfoDialog">数据库信息</el-button>
+        <el-button type="primary" plain size="mini">统计报表</el-button>
+        <el-button type="primary" plain size="mini">抓包分析</el-button>
         <search id="header-search" class="right-menu-item" />
-  
         <error-log class="errLog-container right-menu-item hover-effect" />
-  
         <screenfull id="screenfull" class="right-menu-item hover-effect" />
-  
         <el-tooltip content="Global Size" effect="dark" placement="bottom">
           <size-select id="size-select" class="right-menu-item hover-effect" />
         </el-tooltip>
-  
-  
+
       </template>
-  
-  
+
+
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
           <img :src="avatar + '?imageView2/1/w/80/h/80'" class="user-avatar">
@@ -56,13 +44,13 @@
           <el-dropdown-item divided @click.native="logout">
             <span style="display:block;">Log Out</span>
           </el-dropdown-item>
-  
+
         </el-dropdown-menu>
       </el-dropdown>
 
     </div>
- 
-  
+
+
   </div>
 
 </template>
@@ -99,8 +87,8 @@ export default {
 
   data() {
     return {
-     
-    }    
+      msg: '',
+    }
   },
 
   methods: {
@@ -111,7 +99,18 @@ export default {
       await this.$store.dispatch('user/logout')
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
     },
+    showDbInfoDialog: function () {
+      
+        console.log("showDbDialog",this.msg);
+        this.$refs.childDbInformation.parentMsg(this.msg); 
 
+    },
+    showNasDialog:function () {
+      
+      console.log("showNasDialog",this.msg);
+      this.$refs.childNas.parentMsg(this.msg); 
+
+  },
 
   }
 }
@@ -123,7 +122,7 @@ export default {
   // overflow: hidden;
   position: relative;
   background: #fff;
-  box-shadow: 0 1px 4px rgba(0,21,41,.08);
+  box-shadow: 0 1px 4px rgba(0, 21, 41, .08);
 
   .hamburger-container {
     line-height: 46px;
@@ -131,7 +130,7 @@ export default {
     float: left;
     cursor: pointer;
     transition: background .3s;
-    -webkit-tap-highlight-color:transparent;
+    -webkit-tap-highlight-color: transparent;
 
     &:hover {
       background: rgba(0, 0, 0, .025)
@@ -147,8 +146,7 @@ export default {
     vertical-align: top;
   }
 
-  .right-menu 
-  {
+  .right-menu {
     float: right;
     height: 100%;
     line-height: 50px;
@@ -198,6 +196,6 @@ export default {
         }
       }
     }
-  } 
+  }
 }
 </style>
