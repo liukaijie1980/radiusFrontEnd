@@ -7,16 +7,9 @@
             <el-tag type="info">创建者:     {{owner}}</el-tag>
             <el-tag type="info">节点id:     {{currentId}}</el-tag>
 
-            <el-table :data="tableData" stripe style="width: 100%;">
-                <el-table-column prop="subNodes" label="子管理节点数量" width="180">
-                </el-table-column>
-                <el-table-column prop="registedAccounts" label="注册用户数" width="180">
-                </el-table-column>
-                <el-table-column prop="onlineAccounts" label="当前在线人数" width="180">
-                </el-table-column>
-                <el-table-column prop="onlineTerminals" label="当前在线终端数" width="180">
-                </el-table-column>
-            </el-table>
+            
+            <nodestatistic :NodeId="currentId"></nodestatistic>
+            
 
         </el-header>
         <el-main style="align-items: center;">
@@ -33,27 +26,21 @@
 <script>
 
 import admin from "./admin.vue";
-
+import nodestatistic from "./nodestatistic.vue";
 
 export default {
     props: ['NodeId'],
     // 组件注册
  components: {    
-    admin,
+    admin, 
+    nodestatistic
   },
     data() {
         return {
             currentLabel: this.$store.getters.treeObj.getCurrentNode().label,
             owner:this.$store.getters.treeObj.getCurrentNode() .owner,
            currentId:this.$store.getters.treeObj.getCurrentNode() .id,
-            tableData: [{
-                subNodes: 10,
-                registedAccounts: 101,
-                onlineAccounts: 80,
-                onlineTerminals: 110,
-
-            },
-            ]
+           
 
         }
     },

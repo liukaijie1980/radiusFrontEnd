@@ -88,7 +88,7 @@ export default {
             // 添加用户的表单数据
             addForm: {
                 realm: '',
-                node_pid: this.$store.getters.currentNode.id
+                node_id: this.$store.getters.currentNode.id
             },
       
            

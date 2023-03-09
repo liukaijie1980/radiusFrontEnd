@@ -1,14 +1,14 @@
 import request from '@/utils/request'
 
 
-export function GetRealms( node_pid) {  
-    console.log("api GetRealms",node_pid)
+export function GetRealms( node_id) {  
+    console.log("api GetRealms",node_id)
      
     return request({
       url: '/realm',
       method: 'get',
       params:{
-        node_pid:node_pid
+        node_id:node_id
       } 
     })
   }
