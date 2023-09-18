@@ -3,7 +3,7 @@
     <div class="search-container" style="display:flex;">
       <el-input placeholder="请输入上网账号" prefix-icon="el-icon-search" v-model="SearchInput">
       </el-input>
-      <el-button icon="el-icon-search" circle></el-button>
+      <el-button icon="el-icon-search" circle @click="searchAccountInTree"></el-button>
     </div>
     <div class="custom-tree-container" style="height:100%;display:block ">
       <el-scrollbar style="height:100%;display:block ">
@@ -28,8 +28,7 @@
             <!-- 渲染菜单右边小按钮 -->
             <span v-if="data.type < 3">
               <span v-if="data.type == 1">
-                <el-button type="primary" size="mini" icon="el-icon-folder-add" circle
-                  @click="() => appendFolder(data)">
+                <el-button type="primary" size="mini" icon="el-icon-folder-add" circle @click="() => appendFolder(data)">
                 </el-button>
                 <el-button type="primary" size="mini" icon="el-icon-document-add" circle @click="() => append(data)">
                 </el-button>
@@ -49,7 +48,7 @@
     <el-dialog title="重命名" :visible.sync="renameDialogVisible" width="50%" @close="renameDialogClosed">
       <el-form :model="renameForm" :rules="renameFormRules" ref="renameFormRef" label-width="70px">
         <el-form-item label="节点名">
-          <el-input v-model="renameForm.name" ></el-input>
+          <el-input v-model="renameForm.name"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -61,13 +60,13 @@
 </template>
 
 <script>
-
+import { getNodeIdsByAcccount } from '@/api/sideBarTree'
 
 import { v4 as uuidv4 } from 'uuid';
 
 export default {
   computed: {
-   
+
     dataForTree() {
       console.log("layout->sidebartree apply data to tree", this.$store.state.sideBarTree.data)
       return JSON.parse(JSON.stringify(this.$store.state.sideBarTree.data))
@@ -81,30 +80,57 @@ export default {
     //本函数在初始化的最后阶段调用
     console.log("mounted dispatch before")
     this.$store.dispatch('sideBarTree/GetTree', this.$store.getters.nodeid)
-    console.log("mounted dispatch finish", this.$store.state.sideBarTree.data) 
+    console.log("mounted dispatch finish", this.$store.state.sideBarTree.data)
     //保存树组件对象到store
-   this.$store.commit('sideBarTree/SET_TREE_OBJ', this.$refs.tree)   
-   
+    this.$store.commit('sideBarTree/SET_TREE_OBJ', this.$refs.tree)
+
   },
 
 
   data() {
     return {
       SearchInput: '',
-      renameDialogVisible:false,
-      renameForm:{
-        name:'',
-        
+      renameDialogVisible: false,
+      renameForm: {
+        name: '',
+
       },
-      CurrentNodeData:{},
-      renameFormRules:{},
+      CurrentNodeData: {},
+      renameFormRules: {},
     }
   },
 
 
 
   methods: {
-   
+    searchAccountInTree() {
+      // 折叠所有树节点
+      for (let node of this.$refs.tree.store._getAllNodes()) {
+        node.expanded = false;
+      }
+
+      // 从后端获取需要展开的节点 IDs
+      getNodeIdsByAcccount(this.SearchInput).then(Response => {
+        const expandNodeIds = Response.data.data; // 需要展开的节点 IDs
+        console.log("getNodeIdsByAcccount(this.SearchInput):", expandNodeIds);
+
+        // 遍历所有树节点
+        for (let node of this.$refs.tree.store._getAllNodes()) {
+          // 如果当前节点在需要展开的节点 IDs 列表中
+          if (expandNodeIds.includes(node.data.id)) {
+            console.log("match", node.data.id);
+            // 展开当前节点及其所有父节点
+            let currentNode = node;
+            while (currentNode) {
+              currentNode.expanded = true;
+              currentNode = currentNode.parent;
+            }
+          }
+        }
+      });
+
+    },
+
 
     handleClickNodeEvent(data, node, item) {
       console.log("data,node,item", data, node, item)
@@ -118,7 +144,7 @@ export default {
         case 2:
           this.$router.push({ name: 'folder', params: { NodeId } })
           break;
-       
+
         case 4:
           this.$router.push({ name: 'account', params: { NodeId } })
           break;
@@ -131,10 +157,10 @@ export default {
         case 7:
           this.$router.push({ name: 'webportal', params: { NodeId } })
           break;
-          case 8:
+        case 8:
           this.$router.push({ name: 'onlineuser', params: { NodeId } })
           break;
-          case 9:
+        case 9:
           this.$router.push({ name: 'authlog', params: { NodeId } })
           break;
       }
@@ -153,15 +179,22 @@ export default {
         owner: this.$store.getters.name,
         children: [
           //添加功能菜单，这里将来要结合权限管理
-         {
+          {
             id: uuidv4(),
-            label: "上网账号",
-            type: 4,
+            label: "认证日志",
+            type: 9,
             pid: id,
-          }, {
+          },
+          {
             id: uuidv4(),
             label: "上网记录",
             type: 5,
+            pid: id,
+          },
+          {
+            id: uuidv4(),
+            label: "上网账号",
+            type: 4,
             pid: id,
           }, /* {
             id: uuidv4(),
@@ -180,12 +213,7 @@ export default {
             type: 8,
             pid: id,
           },
-          {
-            id: uuidv4(),
-            label: "认证日志",
-            type: 9,
-            pid: id,
-          },
+
 
         ]
       };
@@ -249,19 +277,19 @@ export default {
 
       // 弹框提示用户是否删除
       const confirmResult = await this.$confirm(
-                '此操作将永久删除该节点及其关联的管理员, 是否继续?',
-                '提示',
-                {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }
-            ).catch(err => err)
-            // 如果用户确认删除，则返回字符串 confirm
-            // 如果用户取消删除，则返回字符串 cancel
-            if (confirmResult !== 'confirm') {
-                return this.$message.info('已取消删除')
-            }
+        '此操作将永久删除该节点及其关联的管理员, 是否继续?',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      ).catch(err => err)
+      // 如果用户确认删除，则返回字符串 confirm
+      // 如果用户取消删除，则返回字符串 cancel
+      if (confirmResult !== 'confirm') {
+        return this.$message.info('已取消删除')
+      }
 
       const parent = node.parent;
       const children = parent.data.children || parent.data;
@@ -277,20 +305,20 @@ export default {
     rename(node, data) {
 
       console.log("before rename", JSON.stringify(data));
-      
-    
-     this.renameForm.name=data.label ;
-     this.CurrentNodeData=data;
-     this.renameDialogVisible=true;
+
+
+      this.renameForm.name = data.label;
+      this.CurrentNodeData = data;
+      this.renameDialogVisible = true;
 
     },
 
-    renameDialogClosed(){},
-    renameNodeConfirm(){
-      this.CurrentNodeData.label= this.renameForm.name;
+    renameDialogClosed() { },
+    renameNodeConfirm() {
+      this.CurrentNodeData.label = this.renameForm.name;
       //将变化保存到后端数据库
       this.$store.dispatch('sideBarTree/SetTree', this.$refs.tree.root)
-      this.renameDialogVisible=false;
+      this.renameDialogVisible = false;
 
     },
 
@@ -316,7 +344,7 @@ export default {
   height: 100%;
   margin: 0px;
   font-size: 15px;
-  
+
 }
 
 .custom-tree-node {
@@ -336,196 +364,22 @@ export default {
 }
 
 
-.el-tree-node:focus > .el-tree-node__content {
+.el-tree-node:focus>.el-tree-node__content {
   /*设置选中的样式 */
   background-color: #dde9ff !important;
 }
+
 .el-tree-node__content:hover {
   /*设置鼠标飘过的颜色 */
   background: #eaf9ff !important;
   color: #007bff;
 }
 
-.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
+.el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content {
   /*current选中的样式 */
   color: #4d95fd;
   font-weight: bold;
-  background-color:  #dde9ff !important;
+  background-color: #dde9ff !important;
 }
-
-
 </style>
 
-
-
-
-
-
-
-<!-- <template>
-  <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
-    background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" :collapse="isCollapse">
-
-    <el-menu-item v-for="item in noChildren" :key="item.name" :index="item.name">
-      <i :class="`el-icon-${item.icon}`"></i>
-      <span slot="title">{{item.label}}</span>
-    </el-menu-item>
-
-    <el-submenu v-for="item in hasChildren" :key="item.label" :index="item.label">
-      <template slot="title">
-        <i :class="`el-icon-${item.icon}`"></i>
-        <span>{{item.label}}</span>
-      </template>
-
-      <el-menu-item-group v-for="subitem in item.children" :key="path" :index="subitem.path">
-        <template slot="title">分组一</template>
-        <el-menu-item :index="subitem.path">{{subitem.label}}</el-menu-item>
-      </el-menu-item-group>
-
-
-    </el-submenu>
-
-
-  </el-menu>
-</template>
-
-<script >
-export default {
-  data() {
-    return {
-      isCollapse: false,
-      menuData: [
-        {
-          path: '/',
-          name: 'home',
-          label: '首页',
-          icon: 's-home',
-          url: 'Home/Home'
-        },
-        {
-          path: '/mall',
-          name: 'mall',
-          label: '商品管理',
-          icon: 'video-play',
-          url: 'MallManage/MallManage'
-        },
-        {
-          path: '/user',
-          name: 'user',
-          label: '用户管理',
-          icon: 'user',
-          url: 'UserManage/UserManage'
-        },
-        {
-          label: '其他',
-          icon: 'location',
-          children: [
-            {
-              path: '/page1',
-              name: 'page1',
-              label: '页面1',
-              icon: 'setting',
-              url: 'Other/PageOne'
-            },
-            {
-              path: '/page2',
-              name: 'page2',
-              label: '页面2',
-              icon: 'setting',
-              url: 'Other/PageTwo',
-              children: [
-                {
-                  path: '/page1',
-                  name: 'page1',
-                  label: '页面1',
-                  icon: 'setting',
-                  url: 'Other/PageOne'
-                },
-                {
-                  path: '/page2',
-                  name: 'page2',
-                  label: '页面2',
-                  icon: 'setting',
-                  url: 'Other/PageTwo'
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    }
-  },
-  methods: {
-    handleOpen(key, keyPath) {
-      console.log(key, keyPath);
-    },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath);
-    }
-  },
-
-  computed: {
-    noChildren() {
-      return this.menuData.filter(item => !item.children)
-    },
-    hasChildren() {
-      return this.menuData.filter(item => item.children)
-    }
-  }
-}
-</script> -->
-
-
-
-<!-- <template>
-  <div :class="{'has-logo':showLogo}">
-    <logo v-if="showLogo" :collapse="isCollapse" />
-    <el-scrollbar wrap-class="scrollbar-wrapper">
-      <el-menu :default-active="activeMenu" :collapse="isCollapse" :background-color="variables.menuBg"
-        :text-color="variables.menuText" :unique-opened="false" :active-text-color="variables.menuActiveText"
-        :collapse-transition="false" mode="vertical">
-       
-      <sidebar-item v-for="route in permission_routes" :key="route.path" :item="route" :base-path="route.path" /> 
-       
-      </el-menu>
-    </el-scrollbar>
-  </div>
-</template> -->
-<!-- 
-<script>
-import { mapGetters } from 'vuex'
-import Logo from './Logo'
-import SidebarItem from './SidebarItem'
-import variables from '@/styles/variables.scss'
-
-export default {
-  components: { SidebarItem, Logo },
-  computed: {
-    ...mapGetters([
-      'permission_routes',
-      'sidebar'
-    ]),
-    activeMenu() {
-
-      const route = this.$route
-      const { meta, path } = route
-      // if set path, the sidebar will highlight the path you set
-      if (meta.activeMenu) {
-        return meta.activeMenu
-      }
-      return path
-    },
-    showLogo() {
-      debugger
-      return this.$store.state.settings.sidebarLogo
-    },
-    variables() {
-      return variables
-    },
-    isCollapse() {
-      return !this.sidebar.opened
-    }
-  }
-}
-</script>
- -->

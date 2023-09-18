@@ -3,24 +3,26 @@ import { getTreeData,setTreeData } from '@/api/sideBarTree'
 
 
 //返回输出数组  (list:输入数组，parId:根节点的pid)
-function listToTree(list,parId) {
+function listToTree(list, parId) {
   let obj = {};
   let result = [];
   //将数组中数据转为键值对结构 (这里的数组和obj会相互引用)
   list.map(el => {
-      obj[el.id] = el;
+    obj[el.id] = el;
   })
-  for(let i=0, len = list.length; i < len; i++) {
-      let id = list[i].pid;
-      if(id == parId) {
-          result.push(list[i]);
-          continue;
-      }
-      if(obj[id].children) {
-          obj[id].children.push(list[i]);
-      } else {
-          obj[id].children = [list[i]];
-      }
+  for (let i = 0, len = list.length; i < len; i++) {
+    let id = list[i].pid;
+    if (id == parId) {
+      result.push(list[i]);
+      continue;
+    }
+    if (obj[id].children) {
+      obj[id].children.push(list[i]);
+    } else {
+      obj[id].children = [list[i]];
+    }
+    // 对children按照label排序
+    obj[id].children.sort((a, b) => a.label.localeCompare(b.label));
   }
   return result;
 }
