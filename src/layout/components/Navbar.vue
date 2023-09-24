@@ -81,7 +81,7 @@ import SizeSelect from '@/components/SizeSelect'
 import Search from '@/components/HeaderSearch'
 import DbInformation from './globalDialog/DbInformation.vue'
 import Nas from './globalDialog/Nas.vue'
-import { getGitVersion } from '@/api/backend-version'
+import { getGit } from '@/api/backend-version'
 
 export default {
   components: {
@@ -119,9 +119,9 @@ export default {
     // ...其他方法...
     showVersionInfo() {
 
-      getGitVersion().then(commitId  => {
-        console.log("commitId",commitId );  // Here you have your commit.id
-        this.backendGitVersion = commitId ;
+      getGit().then(Response  => {
+        console.log("Response",Response.data.data );  // Here you have your commit.id
+        this.backendGitVersion = Response.data.data.shortCommitId ;
       });
       
       this.versionDialogVisible = true;
