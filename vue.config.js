@@ -1,4 +1,10 @@
 'use strict'
+const webpack = require('webpack');
+const GitRevisionPlugin = require('git-revision-webpack-plugin');
+const gitRevisionPlugin = new GitRevisionPlugin();
+
+
+
 const path = require('path')
 const defaultSettings = require('./src/settings.js')
 
@@ -48,6 +54,13 @@ module.exports = {
         '@': resolve('src')
       }
     },
+    plugins: [
+      gitRevisionPlugin,
+      new webpack.DefinePlugin({
+        'process.env.GIT_VERSION': JSON.stringify(gitRevisionPlugin.version()),
+        'process.env.GIT_COMMIT_HASH': JSON.stringify(gitRevisionPlugin.commithash())
+      })
+    ]
     
   },
   chainWebpack(config) {

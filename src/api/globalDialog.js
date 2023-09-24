@@ -67,3 +67,20 @@ export function ApplyNas() {
 
   })
 }
+
+export function getGitVersion() {
+  console.log('api getGitVersion');
+  axios.get(process.env.VUE_APP_BASE_API + '/actuator/info', {
+    headers: {
+      'x-token': 'your-token-value'
+    }
+  })
+    .then(response => {
+      this.info = response.data;
+    })
+    .catch(error => {
+      this.error = error;
+    });
+}
+
+
