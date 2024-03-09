@@ -227,11 +227,11 @@ export default {
       console.log("this.value", this.value)//realm
       
  
-      Getradpostauth(this.queryInfo.username, 
+      Getradpostauth(this.queryInfo.username.trim(), 
                      this.value,
                      this.queryInfo.reply,
-                     this.queryInfo.callingstationid,
-                     this.queryInfo.nasidentifier,
+                     this.queryInfo.callingstationid.trim(),
+                     this.queryInfo.nasidentifier.trim(),
                      this.queryInfo.DateFromTo,
                      this.queryInfo.pagenum,
                      this.queryInfo.pagesize).then(

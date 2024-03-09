@@ -306,10 +306,10 @@ export default {
       console.log("this.value", this.value)//realm
       
  
-      GetOfflineUser(this.queryInfo.username, 
+      GetOfflineUser(this.queryInfo.username.trim(), 
                      this.value,
-                     this.queryInfo.framedipaddress,
-                     this.queryInfo.callingstationid,
+                     this.queryInfo.framedipaddress.trim(),
+                     this.queryInfo.callingstationid.trim(),
                      this.queryInfo.DateFromTo,
                      this.queryInfo.pagenum,
                      this.queryInfo.pagesize).then(

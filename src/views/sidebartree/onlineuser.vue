@@ -252,7 +252,7 @@
       //获取用户列表
       getUserList() {
         console.log("this.value", this.value)
-        GetOnlineUser(this.queryInfo.query, this.value, this.queryInfo.pagenum, this.queryInfo.pagesize).then(
+        GetOnlineUser(this.queryInfo.query.trim(), this.value, this.queryInfo.pagenum, this.queryInfo.pagesize).then(
           Response => {
             console.log("after GetOnlineUsser:Response.data.data", Response.data.data)
             this.userList = Response.data.data.records;

@@ -465,8 +465,8 @@ export default {
 
     // 获取用户列表
     getUserList() {
-      console.log('this.value', this.value)
-      GetAccountInfo(this.queryInfo.query, this.value, this.queryInfo.pagenum, this.queryInfo.pagesize)
+      console.log('this.value', this.value)           
+      GetAccountInfo(this.queryInfo.query.trim(), this.value, this.queryInfo.pagenum, this.queryInfo.pagesize)
         .then(
           Response => {
             console.log('after GetAccountInfo:Response.data.data', Response.data.data)
